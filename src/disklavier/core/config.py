@@ -31,14 +31,15 @@ class MIDISettings(BaseModel):
 
 class SoundfontSettings(BaseModel):
     """Soundfont settings for FluidSynth."""
-    path: str = "/opt/disklavier/soundfonts/General Montage.sf2"
+    path: str = "/opt/disklavier/soundfonts/general_montage.sf2"
     gain: float = 1.0
 
 
 class AirPlayBroadcastSettings(BaseModel):
     """AirPlay broadcast settings."""
-    enabled: bool = True
+    enabled: bool = False  # Disabled by default due to ~2s AirPlay latency
     target: str = "auto"
+    audio_delay_ms: int = 0  # Delay audio to sync with piano (0-2000ms)
 
 
 class NetworkMIDISettings(BaseModel):

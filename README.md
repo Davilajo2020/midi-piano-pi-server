@@ -10,6 +10,8 @@ A Raspberry Pi service that turns a Yamaha Disklavier into a network-enabled sma
 - Network MIDI via rtpmidid (Apple MIDI compatible)
 - AirPlay audio broadcast (piano to speakers)
 
+> **Note on AirPlay:** AirPlay has inherent latency of ~2 seconds, making it unsuitable for real-time piano monitoring. It's best used for background music playback or when latency isn't critical. The feature is disabled by default and can be enabled in the Status tab of the web interface.
+
 ## Requirements
 
 - Raspberry Pi 4 or 5

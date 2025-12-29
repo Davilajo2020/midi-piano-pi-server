@@ -84,6 +84,21 @@ const App = {
             // Load initial state
             this.loadAirPlayStatus();
         }
+
+        // Audio delay slider
+        const audioDelaySlider = document.getElementById('audio-delay-slider');
+        const audioDelayValue = document.getElementById('audio-delay-value');
+        if (audioDelaySlider) {
+            audioDelaySlider.addEventListener('input', (e) => {
+                const ms = parseInt(e.target.value);
+                if (audioDelayValue) audioDelayValue.textContent = `${ms}ms`;
+            });
+            audioDelaySlider.addEventListener('change', (e) => {
+                this.setAudioDelay(parseInt(e.target.value));
+            });
+            // Load initial value
+            this.loadAudioDelay();
+        }
     },
 
     async loadVelocityScale() {
@@ -139,6 +154,31 @@ const App = {
         if (status) {
             status.textContent = enabled ? 'On' : 'Off';
             status.className = enabled ? 'status-text active' : 'status-text';
+        }
+    },
+
+    async loadAudioDelay() {
+        try {
+            const response = await fetch('/api/v1/status/airplay/delay');
+            const data = await response.json();
+            const slider = document.getElementById('audio-delay-slider');
+            const value = document.getElementById('audio-delay-value');
+            if (slider) slider.value = data.delay_ms;
+            if (value) value.textContent = `${data.delay_ms}ms`;
+        } catch (error) {
+            console.error('Failed to load audio delay:', error);
+        }
+    },
+
+    async setAudioDelay(delay_ms) {
+        try {
+            await fetch('/api/v1/status/airplay/delay', {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ delay_ms }),
+            });
+        } catch (error) {
+            console.error('Failed to set audio delay:', error);
         }
     },
 

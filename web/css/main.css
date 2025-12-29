@@ -618,6 +618,46 @@ body {
     color: var(--success);
 }
 
+/* Audio Delay Control */
+.audio-delay-control {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+    padding: 1rem;
+    background: var(--bg-tertiary);
+    border-radius: 8px;
+}
+
+.audio-delay-control label {
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.audio-delay-control input[type="range"] {
+    flex: 1;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--border);
+    border-radius: 3px;
+}
+
+.audio-delay-control input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#audio-delay-value {
+    min-width: 60px;
+    color: var(--accent);
+    font-weight: 600;
+}
+
 /* ============================================
    Tab Navigation
    ============================================ */

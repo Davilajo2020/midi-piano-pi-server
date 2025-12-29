@@ -5,8 +5,8 @@ Wants=pipewire-pulse.service
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/fluidsynth --server --no-shell --audio-driver=pulseaudio --midi-driver=alsa_seq -o midi.autoconnect=1 --gain=1.0 "/home/david/soundfonts/General Montage.sf2"
-Restart=always
+ExecStart=/usr/bin/fluidsynth -s -a pulseaudio -m alsa_seq -o midi.autoconnect=1 -g 1.0 /home/david/soundfonts/general_montage.sf2
+Restart=on-failure
 RestartSec=5
 
 [Install]

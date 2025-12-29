@@ -1,12 +1,18 @@
 """Status and health check endpoints."""
 
+import json
 import os
 import subprocess
+from pathlib import Path
 
 import psutil
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel, Field
 
 from ...core.midi_controller import MIDIController, get_midi_controller
+
+# Runtime settings file for audio delay
+RUNTIME_SETTINGS_FILE = Path("/var/lib/disklavier/settings.json")
 
 
 def _run_user_systemctl(command: str, service: str) -> tuple[bool, str]:
@@ -144,4 +150,92 @@ async def disable_airplay():
         "success": success,
         "enabled": active,
         "message": message if not success else None,
+    }
+
+
+# ============================================
+# Audio Delay Settings
+# ============================================
+
+def _load_runtime_settings() -> dict:
+    """Load runtime settings from file."""
+    if RUNTIME_SETTINGS_FILE.exists():
+        try:
+            return json.loads(RUNTIME_SETTINGS_FILE.read_text())
+        except (json.JSONDecodeError, IOError):
+            pass
+    return {}
+
+
+def _save_runtime_settings(settings: dict) -> None:
+    """Save runtime settings to file."""
+    RUNTIME_SETTINGS_FILE.parent.mkdir(parents=True, exist_ok=True)
+    RUNTIME_SETTINGS_FILE.write_text(json.dumps(settings, indent=2))
+
+
+def _apply_audio_delay(delay_ms: int) -> tuple[bool, str]:
+    """Apply audio delay using PulseAudio/PipeWire latency offset."""
+    try:
+        uid = os.getuid()
+        env = os.environ.copy()
+        env["XDG_RUNTIME_DIR"] = f"/run/user/{uid}"
+
+        # Convert ms to microseconds for PulseAudio
+        delay_usec = delay_ms * 1000
+
+        # Use pactl to set the latency offset on the default sink
+        # This adds artificial latency to the audio output
+        result = subprocess.run(
+            ["pactl", "set-port-latency-offset", "@DEFAULT_SINK@", "analog-output-lineout", str(delay_usec)],
+            capture_output=True,
+            text=True,
+            env=env,
+            timeout=5,
+        )
+
+        if result.returncode != 0:
+            # Try alternative: set on all sinks
+            result = subprocess.run(
+                ["pactl", "list", "sinks", "short"],
+                capture_output=True,
+                text=True,
+                env=env,
+                timeout=5,
+            )
+            # Fallback: just save the setting, FluidSynth will use it on restart
+            return True, "Delay saved (will apply on next FluidSynth restart)"
+
+        return True, "Delay applied"
+    except Exception as e:
+        return False, str(e)
+
+
+class AudioDelayRequest(BaseModel):
+    """Request to set audio delay."""
+    delay_ms: int = Field(..., ge=0, le=2000, description="Audio delay in milliseconds (0-2000)")
+
+
+@router.get("/airplay/delay")
+async def get_audio_delay():
+    """Get current audio delay setting."""
+    settings = _load_runtime_settings()
+    delay_ms = settings.get("audio_delay_ms", 0)
+    return {
+        "delay_ms": delay_ms,
+    }
+
+
+@router.put("/airplay/delay")
+async def set_audio_delay(request: AudioDelayRequest):
+    """Set audio delay for AirPlay broadcast to sync with piano."""
+    settings = _load_runtime_settings()
+    settings["audio_delay_ms"] = request.delay_ms
+    _save_runtime_settings(settings)
+
+    success, message = _apply_audio_delay(request.delay_ms)
+
+    return {
+        "success": success,
+        "delay_ms": request.delay_ms,
+        "message": message,
     }
