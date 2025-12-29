@@ -270,8 +270,8 @@ async def play_catalog_file(file_id: str):
 
             # Load and play the file
             try:
-                file_info = player.load(file_path)
-                player.play()
+                file_info = await player.load_async(file_path)
+                await player.play()
                 return {
                     "success": True,
                     "file": file_path.name,

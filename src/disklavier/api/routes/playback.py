@@ -271,7 +271,7 @@ async def play_next(player: MIDIPlayer = Depends(get_midi_player)):
         return {"success": False, "message": f"File not found: {next_item['name']}", "queue": queue}
 
     try:
-        player.load(file_path)
+        await player.load_async(file_path)
         await player.play()
         return {
             "success": True,

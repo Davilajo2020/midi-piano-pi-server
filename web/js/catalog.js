@@ -31,11 +31,17 @@ const Catalog = {
         try {
             const response = await fetch('/api/v1/playback');
             const data = await response.json();
+            const wasPlaying = this.isPlaying;
             this.isPlaying = data.state === 'playing' || data.state === 'paused';
 
             // Update now playing display
-            if (data.file) {
-                document.getElementById('now-playing').textContent = data.file;
+            if (data.file_name) {
+                document.getElementById('now-playing').textContent = data.file_name;
+            }
+
+            // Auto-advance queue when song ends
+            if (wasPlaying && data.state === 'stopped' && this.queue.length > 0) {
+                await this.playNext();
             }
         } catch (error) {
             // Ignore errors
