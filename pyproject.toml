@@ -3,16 +3,16 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "disklavier-pi"
+name = "midi-piano-pi-server"
 version = "0.1.0"
-description = "Turn your Yamaha Disklavier DKC-800 into a network-enabled smart piano"
+description = "Turn your MIDI piano into a network-enabled smart piano with web interface and MIDI playback"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.9"
 authors = [
     { name = "David" }
 ]
-keywords = ["disklavier", "midi", "piano", "yamaha", "raspberry-pi", "airplay"]
+keywords = ["midi", "piano", "raspberry-pi", "network-midi", "airplay"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Environment :: Web Environment",
@@ -48,15 +48,15 @@ dev = [
 ]
 
 [project.scripts]
-disklavier = "disklavier.__main__:main"
+midi-piano-pi = "midi_piano_pi.__main__:main"
 
 [project.urls]
-Homepage = "https://github.com/YOUR_USERNAME/disklavier-pi"
-Repository = "https://github.com/YOUR_USERNAME/disklavier-pi"
-Issues = "https://github.com/YOUR_USERNAME/disklavier-pi/issues"
+Homepage = "https://github.com/YOUR_USERNAME/midi-piano-pi-server"
+Repository = "https://github.com/YOUR_USERNAME/midi-piano-pi-server"
+Issues = "https://github.com/YOUR_USERNAME/midi-piano-pi-server/issues"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/disklavier"]
+packages = ["src/midi_piano_pi"]
 
 [tool.hatch.build.targets.sdist]
 include = [

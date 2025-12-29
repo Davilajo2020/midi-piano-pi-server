@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     """Application lifespan handler."""
     # Startup: Connect to MIDI device
-    logger.info("Starting Disklavier Pi...")
+    logger.info("Starting MIDI Piano Pi...")
     midi = get_midi_controller()
     if midi.connect():
         logger.info("MIDI connected: %s", midi.device_name)
@@ -30,7 +30,7 @@ async def lifespan(app: FastAPI):
     yield
 
     # Shutdown: Disconnect MIDI
-    logger.info("Shutting down Disklavier Pi...")
+    logger.info("Shutting down MIDI Piano Pi...")
     midi.all_notes_off()
     midi.disconnect()
 
@@ -40,8 +40,8 @@ def create_app() -> FastAPI:
     settings = get_settings()
 
     app = FastAPI(
-        title="Disklavier Pi",
-        description="Network-enabled Yamaha Disklavier control",
+        title="MIDI Piano Pi",
+        description="Network-enabled MIDI piano control",
         version="0.1.0",
         lifespan=lifespan,
     )

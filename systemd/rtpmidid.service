@@ -6,7 +6,7 @@ Wants=avahi-daemon.service
 [Service]
 Type=simple
 ExecStartPre=/bin/mkdir -p /var/run/rtpmidid
-ExecStart=/usr/local/bin/rtpmidid --name "Disklavier Pi"
+ExecStart=/usr/local/bin/rtpmidid --name "MIDI Piano Pi"
 Restart=always
 RestartSec=5
 User=root

@@ -1,11 +1,11 @@
 #!/bin/bash
-# Disklavier Pi Installation Script
-# Sets up the Raspberry Pi as a network MIDI controller for Yamaha DKC-800
+# MIDI Piano Pi Server Installation Script
+# Sets up the Raspberry Pi as a network MIDI controller
 
 set -e
 
 echo "==================================="
-echo "  Disklavier Pi Installation"
+echo "  MIDI Piano Pi Server Installation"
 echo "==================================="
 echo ""
 
@@ -15,7 +15,7 @@ if [ "$EUID" -eq 0 ]; then
     exit 1
 fi
 
-INSTALL_DIR="$HOME/disklavier_pi"
+INSTALL_DIR="$HOME/midi_piano_pi"
 VENV_DIR="$INSTALL_DIR/venv"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -25,7 +25,7 @@ if [ ! -f "$INSTALL_DIR/pyproject.toml" ]; then
     if [ -d "$INSTALL_DIR" ]; then
         rm -rf "$INSTALL_DIR"
     fi
-    git clone https://github.com/DavidWatkins/disklavier-pi.git "$INSTALL_DIR"
+    git clone https://github.com/DavidWatkins/midi-piano-pi-server.git "$INSTALL_DIR"
 elif [ "$SCRIPT_DIR" != "$INSTALL_DIR" ] && [ -f "$SCRIPT_DIR/pyproject.toml" ]; then
     echo "[0/7] Copying from source directory..."
     mkdir -p "$INSTALL_DIR"
@@ -47,10 +47,10 @@ sudo apt-get install -y \
 
 # 2. Create directories
 echo "[2/7] Creating directories..."
-sudo mkdir -p /var/lib/disklavier/uploads
-sudo mkdir -p /var/lib/disklavier/catalog
-sudo chown -R $USER:$USER /var/lib/disklavier
-mkdir -p ~/.config/disklavier
+sudo mkdir -p /var/lib/midi-piano-pi/uploads
+sudo mkdir -p /var/lib/midi-piano-pi/catalog
+sudo chown -R $USER:$USER /var/lib/midi-piano-pi
+mkdir -p ~/.config/midi-piano-pi
 
 # 3. Set up Python virtual environment
 echo "[3/7] Setting up Python environment..."
@@ -96,10 +96,10 @@ sudo systemctl enable rtpmidid
 sudo systemctl start rtpmidid || true
 
 # Web interface (system service)
-sudo cp systemd/disklavier-web.service /etc/systemd/system/
+sudo cp systemd/midi-piano-pi-web.service /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable disklavier-web
-sudo systemctl start disklavier-web || true
+sudo systemctl enable midi-piano-pi-web
+sudo systemctl start midi-piano-pi-web || true
 
 # FluidSynth broadcast (user service)
 mkdir -p ~/.config/systemd/user
@@ -126,8 +126,8 @@ echo "  Installation Complete!"
 echo "==================================="
 echo ""
 echo "Services installed:"
-echo "  - disklavier-web: Web interface on port 8080"
-echo "  - rtpmidid: Network MIDI as 'Disklavier Pi'"
+echo "  - midi-piano-pi-web: Web interface on port 8080"
+echo "  - rtpmidid: Network MIDI as 'MIDI Piano Pi'"
 echo "  - fluidsynth-broadcast: AirPlay audio broadcast"
 echo ""
 echo "Access the web interface at: http://$(hostname -I | awk '{print $1}'):8080"

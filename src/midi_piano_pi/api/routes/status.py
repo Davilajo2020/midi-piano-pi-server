@@ -12,7 +12,7 @@ from pydantic import BaseModel, Field
 from ...core.midi_controller import MIDIController, get_midi_controller
 
 # Runtime settings file for audio delay
-RUNTIME_SETTINGS_FILE = Path("/var/lib/disklavier/settings.json")
+RUNTIME_SETTINGS_FILE = Path("/var/lib/midi-piano-pi/settings.json")
 
 
 def _run_user_systemctl(command: str, service: str) -> tuple[bool, str]:

@@ -1,5 +1,5 @@
-# Disklavier Pi Configuration
-# Copy to /etc/disklavier/disklavier.yaml or ~/.config/disklavier/disklavier.yaml
+# MIDI Piano Pi Configuration
+# Copy to /etc/midi-piano-pi/midi-piano-pi.yaml or ~/.config/midi-piano-pi/midi-piano-pi.yaml
 
 general:
   # Name displayed in AirPlay and network discovery
@@ -24,7 +24,7 @@ midi:
 
 soundfont:
   # Path to SF2 soundfont file for FluidSynth rendering
-  path: "/opt/disklavier/soundfonts/General Montage.sf2"
+  path: "/opt/midi-piano-pi/soundfonts/General Montage.sf2"
   # Audio gain (1.0 = normal)
   gain: 1.0
 
@@ -42,7 +42,7 @@ network_midi:
 
 uploads:
   # Directory for uploaded MIDI/KAR files
-  directory: "/var/lib/disklavier/uploads"
+  directory: "/var/lib/midi-piano-pi/uploads"
   # Maximum file size in MB
   max_file_size_mb: 50
   # Allowed file extensions
@@ -54,7 +54,7 @@ uploads:
 catalog:
   # Directories to scan for MIDI/KAR files
   directories:
-    - "/var/lib/disklavier/catalog"
+    - "/var/lib/midi-piano-pi/catalog"
     # Add additional directories as needed:
     # - "/home/david/midi-files"
   # Scan subdirectories recursively

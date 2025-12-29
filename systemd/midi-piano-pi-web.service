@@ -1,0 +1,17 @@
+[Unit]
+Description=MIDI Piano Pi Web Interface
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/david/midi_piano_pi
+ExecStart=/home/david/midi_piano_pi/venv/bin/uvicorn midi_piano_pi.api.app:app --host 0.0.0.0 --port 8080
+Restart=always
+RestartSec=5
+User=david
+Group=david
+Environment=PATH=/home/david/midi_piano_pi/venv/bin:/usr/local/bin:/usr/bin
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

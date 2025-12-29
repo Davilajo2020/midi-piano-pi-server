@@ -40,18 +40,18 @@ jobs:
 
             ### Quick Install (on Raspberry Pi)
             ```bash
-            curl -fsSL https://raw.githubusercontent.com/DavidWatkins/disklavier-pi/${{ github.ref_name }}/install.sh | bash
+            curl -fsSL https://raw.githubusercontent.com/DavidWatkins/midi-piano-pi-server/${{ github.ref_name }}/install.sh | bash
             ```
 
             ### Manual Install
             ```bash
-            git clone https://github.com/DavidWatkins/disklavier-pi.git
-            cd disklavier-pi
+            git clone https://github.com/DavidWatkins/midi-piano-pi-server.git
+            cd midi-piano-pi-server
             git checkout ${{ github.ref_name }}
             ./install.sh
             ```
 
-            See [README](https://github.com/DavidWatkins/disklavier-pi#readme) for full documentation.
+            See [README](https://github.com/DavidWatkins/midi-piano-pi-server#readme) for full documentation.
           generate_release_notes: true
 
   lint:

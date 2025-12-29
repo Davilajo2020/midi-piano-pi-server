@@ -1,4 +1,4 @@
-// Disklavier Pi - Main Application
+// MIDI Piano Pi - Main Application
 
 const App = {
     piano: null,
@@ -6,7 +6,7 @@ const App = {
     statusInterval: null,
 
     init() {
-        console.log('Disklavier Pi initializing...');
+        console.log('MIDI Piano Pi initializing...');
 
         // Initialize WebSocket
         this.ws = new WebSocketManager({

@@ -1,4 +1,4 @@
-"""MIDI Controller for Disklavier DKC-800 communication."""
+"""MIDI Controller for network MIDI interface communication."""
 
 import asyncio
 import logging
@@ -43,9 +43,9 @@ class MIDIDevice:
 
 class MIDIController:
     """
-    Controller for sending and receiving MIDI messages to/from the Disklavier.
+    Controller for sending and receiving MIDI messages to/from the MIDI interface.
 
-    Handles USB MIDI communication with the DKC-800 unit.
+    Handles USB MIDI communication with the connected piano.
     """
 
     def __init__(

@@ -1,4 +1,4 @@
-"""Web API for Disklavier Pi."""
+"""Web API for MIDI Piano Pi."""
 
 from .app import create_app
 

@@ -1,4 +1,4 @@
-// WebSocket Manager for Disklavier Pi
+// WebSocket Manager for MIDI Piano Pi
 
 class WebSocketManager {
     constructor(options = {}) {

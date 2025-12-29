@@ -1,12 +1,12 @@
-# Disklavier Pi
+# MIDI Piano Pi Server
 
-A Raspberry Pi service that turns a Yamaha Disklavier into a network-enabled smart piano. Provides a web interface, MIDI file playback, and WebSocket MIDI for integration with other applications.
+A Raspberry Pi service that turns a network MIDI interface into a smart piano controller. Provides a web interface, MIDI file playback, and WebSocket MIDI for integration with other applications.
 
 ## Features
 
 - Web interface with virtual 88-key piano
 - MIDI file catalog with search and playback queue
-- WebSocket MIDI endpoint for external apps (e.g., Disklavier Karaoke)
+- WebSocket MIDI endpoint for external apps
 - Network MIDI via rtpmidid (Apple MIDI compatible)
 - AirPlay audio broadcast (piano to speakers)
 
@@ -15,8 +15,8 @@ A Raspberry Pi service that turns a Yamaha Disklavier into a network-enabled sma
 ## Requirements
 
 - Raspberry Pi 4 or 5
-- Yamaha Disklavier with DKC-800 control unit
-- USB cable connecting Pi to DKC-800
+- USB MIDI interface or network MIDI compatible piano
+- USB cable connecting Pi to MIDI interface
 - Network connection
 
 ## Installation
@@ -24,14 +24,14 @@ A Raspberry Pi service that turns a Yamaha Disklavier into a network-enabled sma
 ### Quick Install (Recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/DavidWatkins/disklavier-pi/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/DavidWatkins/midi-piano-pi-server/main/install.sh | bash
 ```
 
 ### Manual Install
 
 ```bash
-git clone https://github.com/DavidWatkins/disklavier-pi.git
-cd disklavier-pi
+git clone https://github.com/DavidWatkins/midi-piano-pi-server.git
+cd midi-piano-pi-server
 chmod +x install.sh
 ./install.sh
 ```
@@ -51,7 +51,7 @@ Default hostname is usually `raspberrypi.local` or whatever you configured.
 
 ## Configuration
 
-Edit `~/.config/disklavier/disklavier.yaml`:
+Edit `~/.config/midi-piano-pi/midi-piano-pi.yaml`:
 
 ```yaml
 general:
@@ -68,12 +68,12 @@ midi:
 
 catalog:
   directories:
-    - "/var/lib/disklavier/catalog"
+    - "/var/lib/midi-piano-pi/catalog"
   scan_subdirs: true
   allowed_extensions: [".mid", ".midi", ".kar"]
 
 uploads:
-  directory: "/var/lib/disklavier/uploads"
+  directory: "/var/lib/midi-piano-pi/uploads"
   max_file_size_mb: 50
 ```
 
@@ -83,24 +83,25 @@ Copy MIDI/KAR files to the catalog directory:
 
 ```bash
 # Single file
-cp song.mid /var/lib/disklavier/catalog/
+cp song.mid /var/lib/midi-piano-pi/catalog/
 
 # Folder of files
-cp -r ~/my-midi-collection /var/lib/disklavier/catalog/
+cp -r ~/my-midi-collection /var/lib/midi-piano-pi/catalog/
 ```
 
 Files are available immediately via the catalog API.
 
-## Integration with Disklavier Karaoke
+## WebSocket MIDI Integration
 
-[Disklavier Karaoke](https://github.com/DavidWatkins/disklavier-karaoke) can connect to this service via WebSocket for reliable MIDI playback (bypasses Network MIDI latency issues).
+External applications can connect to this service via WebSocket for reliable MIDI playback (bypasses Network MIDI latency issues).
 
-In Disklavier Karaoke:
-1. Go to Settings > Disklavier (MIDI)
-2. Enter your Pi's hostname (e.g., `raspberrypi.local`)
-3. Click Connect
+Connect to `ws://<pi-hostname>:8080/ws/piano` and send JSON messages:
+```json
+{"type": "note_on", "note": 60, "velocity": 100}
+{"type": "note_off", "note": 60}
+```
 
-All piano MIDI will route through the Pi to your Disklavier.
+All piano MIDI will route through the Pi to your MIDI interface.
 
 ## API Reference
 
@@ -148,9 +149,9 @@ WebSocket message format:
 
 ```bash
 # Web interface
-sudo systemctl status disklavier-web
-sudo systemctl restart disklavier-web
-sudo journalctl -u disklavier-web -f
+sudo systemctl status midi-piano-pi-web
+sudo systemctl restart midi-piano-pi-web
+sudo journalctl -u midi-piano-pi-web -f
 
 # Network MIDI
 sudo systemctl status rtpmidid
@@ -160,10 +161,10 @@ sudo systemctl status rtpmidid
 
 1. Open Audio MIDI Setup > MIDI Studio (Cmd+2)
 2. Double-click the Network icon
-3. Find "Disklavier Pi" in Directory
+3. Find "MIDI Piano Pi" in Directory
 4. Click Connect
 
-Note: WebSocket connection via Disklavier Karaoke is more reliable than Network MIDI.
+Note: WebSocket connection is more reliable than Network MIDI.
 
 ## Troubleshooting
 
@@ -175,7 +176,7 @@ amidi -l      # List raw MIDI devices
 
 **Service won't start:**
 ```bash
-sudo journalctl -u disklavier-web -n 50
+sudo journalctl -u midi-piano-pi-web -n 50
 ```
 
 **Check connectivity:**
@@ -186,11 +187,11 @@ curl http://localhost:8080/api/v1/status
 ## Development
 
 ```bash
-cd disklavier-pi
+cd midi-piano-pi-server
 python3 -m venv venv
 source venv/bin/activate
 pip install -e ".[dev]"
-uvicorn disklavier.api.app:app --reload --host 0.0.0.0 --port 8080
+uvicorn midi_piano_pi.api.app:app --reload --host 0.0.0.0 --port 8080
 ```
 
 ## License

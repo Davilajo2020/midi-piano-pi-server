@@ -1,4 +1,4 @@
-"""MIDI File Player for Disklavier."""
+"""MIDI File Player for network MIDI interface."""
 
 import asyncio
 import logging
@@ -62,7 +62,7 @@ class MIDIPlayer:
     """
     Asynchronous MIDI file player.
 
-    Plays MIDI and KAR files through the Disklavier.
+    Plays MIDI and KAR files through the MIDI interface.
     Automatically detects piano channels and remaps them to channel 0.
     """
 
@@ -254,9 +254,9 @@ class MIDIPlayer:
         logger.info("Play all channels: %s", enabled)
         self._notify_status_change()
 
-    def _should_send_to_disklavier(self, channel: int) -> bool:
+    def _should_send_to_interface(self, channel: int) -> bool:
         """
-        Check if a message on this channel should be sent to the Disklavier.
+        Check if a message on this channel should be sent to the MIDI interface.
 
         Args:
             channel: MIDI channel (0-15)
@@ -411,21 +411,21 @@ class MIDIPlayer:
                     await asyncio.sleep(adjusted_time)
 
                 # Filter and remap MIDI messages
-                # All messages are sent on channel 0 for Disklavier compatibility
+                # All messages are sent on channel 0 for piano compatibility
                 if msg.type == 'note_on':
-                    if self._should_send_to_disklavier(msg.channel):
-                        # Remap to channel 0 for Disklavier
+                    if self._should_send_to_interface(msg.channel):
+                        # Remap to channel 0 for piano
                         self._midi.note_on(msg.note, msg.velocity, channel=0)
                 elif msg.type == 'note_off':
-                    if self._should_send_to_disklavier(msg.channel):
+                    if self._should_send_to_interface(msg.channel):
                         self._midi.note_off(msg.note, channel=0)
                 elif msg.type == 'control_change':
-                    if self._should_send_to_disklavier(msg.channel):
+                    if self._should_send_to_interface(msg.channel):
                         self._midi.control_change(msg.control, msg.value, channel=0)
                 elif msg.type == 'pitchwheel':
-                    if self._should_send_to_disklavier(msg.channel):
+                    if self._should_send_to_interface(msg.channel):
                         self._midi.pitch_bend(msg.pitch + 8192, channel=0)
-                # Skip program_change - Disklavier is always piano
+                # Skip program_change - piano is always piano
 
                 # Update position
                 elapsed = time.time() - start_time

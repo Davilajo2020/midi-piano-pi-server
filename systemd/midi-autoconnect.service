@@ -1,6 +1,6 @@
 [Unit]
-Description=Auto-connect Network MIDI to DKC-800
+Description=Auto-connect Network MIDI to MIDI interface
 
 [Service]
 Type=oneshot
-ExecStart=/home/david/disklavier_pi/scripts/midi-autoconnect.sh
+ExecStart=/home/david/midi_piano_pi/scripts/midi-autoconnect.sh

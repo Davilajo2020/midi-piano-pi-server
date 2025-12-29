@@ -14,7 +14,7 @@ from ...core.midi_player import MIDIPlayer, PlaybackState, get_midi_player
 router = APIRouter(prefix="/api/v1/playback", tags=["playback"])
 
 # Server-side queue storage
-QUEUE_FILE = Path("/var/lib/disklavier/queue.json")
+QUEUE_FILE = Path("/var/lib/midi-piano-pi/queue.json")
 
 
 def load_queue() -> list[dict]:
@@ -169,7 +169,7 @@ async def set_channel_mode(
     Set channel playback mode.
 
     When play_all is False (default), only piano channels (GM programs 0-7) are sent
-    to the Disklavier. When True, all channels except drums are played.
+    to the MIDI interface. When True, all channels except drums are played.
     """
     player.set_play_all_channels(request.play_all)
     return {

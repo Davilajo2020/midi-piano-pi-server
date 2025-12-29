@@ -1,4 +1,4 @@
-"""Configuration management for Disklavier Pi."""
+"""Configuration management for MIDI Piano Pi."""
 
 import os
 from functools import lru_cache
@@ -12,7 +12,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class GeneralSettings(BaseModel):
     """General application settings."""
-    device_name: str = "Disklavier Pi"
+    device_name: str = "MIDI Piano Pi"
     log_level: str = "INFO"
 
 
@@ -31,7 +31,7 @@ class MIDISettings(BaseModel):
 
 class SoundfontSettings(BaseModel):
     """Soundfont settings for FluidSynth."""
-    path: str = "/opt/disklavier/soundfonts/general_montage.sf2"
+    path: str = "/opt/midi-piano-pi/soundfonts/general_montage.sf2"
     gain: float = 1.0
 
 
@@ -50,14 +50,14 @@ class NetworkMIDISettings(BaseModel):
 
 class UploadsSettings(BaseModel):
     """File upload settings."""
-    directory: str = "/var/lib/disklavier/uploads"
+    directory: str = "/var/lib/midi-piano-pi/uploads"
     max_file_size_mb: int = 50
     allowed_extensions: list[str] = Field(default_factory=lambda: [".mid", ".midi", ".kar"])
 
 
 class CatalogSettings(BaseModel):
     """MIDI file catalog settings."""
-    directories: list[str] = Field(default_factory=lambda: ["/var/lib/disklavier/catalog"])
+    directories: list[str] = Field(default_factory=lambda: ["/var/lib/midi-piano-pi/catalog"])
     scan_subdirs: bool = True
     allowed_extensions: list[str] = Field(default_factory=lambda: [".mid", ".midi", ".kar"])
 
@@ -66,7 +66,7 @@ class Settings(BaseSettings):
     """Main application settings."""
 
     model_config = SettingsConfigDict(
-        env_prefix="DISKLAVIER_",
+        env_prefix="MIDI_PIANO_PI_",
         env_nested_delimiter="__",
     )
 
@@ -94,10 +94,10 @@ class Settings(BaseSettings):
 def find_config_file() -> Optional[Path]:
     """Find the configuration file in standard locations."""
     locations = [
-        Path("/etc/disklavier/disklavier.yaml"),
-        Path.home() / ".config" / "disklavier" / "disklavier.yaml",
-        Path("config/disklavier.yaml"),
-        Path("disklavier.yaml"),
+        Path("/etc/midi-piano-pi/midi-piano-pi.yaml"),
+        Path.home() / ".config" / "midi-piano-pi" / "midi-piano-pi.yaml",
+        Path("config/midi-piano-pi.yaml"),
+        Path("midi-piano-pi.yaml"),
     ]
 
     for path in locations:

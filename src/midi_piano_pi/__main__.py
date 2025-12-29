@@ -1,4 +1,4 @@
-"""Entry point for Disklavier Pi."""
+"""Entry point for MIDI Piano Pi."""
 
 import argparse
 import logging
@@ -40,7 +40,7 @@ def cmd_list_devices(args: argparse.Namespace) -> int:
 
 
 def cmd_test_note(args: argparse.Namespace) -> int:
-    """Send a test note to the Disklavier."""
+    """Send a test note to the MIDI interface."""
     settings = get_settings()
     controller = MIDIController(
         device=args.device or settings.midi.device,
@@ -83,8 +83,8 @@ def cmd_serve(args: argparse.Namespace) -> int:
 def main() -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(
-        prog="disklavier",
-        description="Disklavier Pi - Network-enabled Yamaha Disklavier control",
+        prog="midi-piano-pi",
+        description="MIDI Piano Pi - Network-enabled MIDI piano control",
     )
     parser.add_argument(
         "-v", "--verbose",
