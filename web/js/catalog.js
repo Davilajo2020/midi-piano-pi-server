@@ -3,11 +3,43 @@
 const Catalog = {
     currentPath: '',
     queue: [],
-    allFiles: [],
+    isPlaying: false,
 
     async init() {
         this.setupEventListeners();
+        await this.loadQueue();
         await this.loadCatalog();
+        await this.checkPlaybackState();
+
+        // Poll playback state and queue periodically
+        setInterval(() => this.checkPlaybackState(), 2000);
+        setInterval(() => this.loadQueue(), 5000);
+    },
+
+    async loadQueue() {
+        try {
+            const response = await fetch('/api/v1/playback/queue');
+            const data = await response.json();
+            this.queue = data.queue || [];
+            this.renderQueue();
+        } catch (e) {
+            console.error('Failed to load queue:', e);
+        }
+    },
+
+    async checkPlaybackState() {
+        try {
+            const response = await fetch('/api/v1/playback');
+            const data = await response.json();
+            this.isPlaying = data.state === 'playing' || data.state === 'paused';
+
+            // Update now playing display
+            if (data.file) {
+                document.getElementById('now-playing').textContent = data.file;
+            }
+        } catch (error) {
+            // Ignore errors
+        }
     },
 
     setupEventListeners() {
@@ -123,7 +155,7 @@ const Catalog = {
             filesContainer.querySelectorAll('.play-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    this.playFile(btn.dataset.id);
+                    this.playFile(btn.dataset.id, true);
                 });
             });
 
@@ -163,7 +195,7 @@ const Catalog = {
             filesContainer.querySelectorAll('.play-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    this.playFile(btn.dataset.id);
+                    this.playFile(btn.dataset.id, true);
                 });
             });
 
@@ -206,7 +238,7 @@ const Catalog = {
         }
     },
 
-    async playFile(fileId) {
+    async playFile(fileId, switchToPlayer = false) {
         try {
             const response = await fetch(`/api/v1/catalog/${encodeURIComponent(fileId)}/play`, {
                 method: 'POST'
@@ -214,55 +246,113 @@ const Catalog = {
             const data = await response.json();
 
             if (data.success) {
-                // Update player UI
+                this.isPlaying = true;
                 document.getElementById('now-playing').textContent = data.file;
-                this.switchTab('piano');
+
+                // Only switch tab if explicitly requested (Play button, not queue auto-play)
+                if (switchToPlayer) {
+                    this.switchTab('piano');
+                }
             }
         } catch (error) {
             console.error('Failed to play file:', error);
         }
     },
 
-    addToQueue(fileId, fileName) {
-        // Avoid duplicates
-        if (this.queue.find(item => item.id === fileId)) {
-            return;
-        }
+    async addToQueue(fileId, fileName) {
+        try {
+            const response = await fetch('/api/v1/playback/queue', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: fileId, name: fileName })
+            });
+            const data = await response.json();
 
-        this.queue.push({ id: fileId, name: fileName });
-        this.renderQueue();
-
-        // If nothing is playing and this is the first item, start playing
-        if (this.queue.length === 1) {
-            this.playNext();
+            if (data.success) {
+                this.queue = data.queue;
+                this.renderQueue();
+                this.showToast(`Added "${fileName}" to queue`);
+            } else {
+                this.showToast(data.message || 'Already in queue');
+            }
+        } catch (e) {
+            console.error('Failed to add to queue:', e);
         }
     },
 
-    removeFromQueue(index) {
-        this.queue.splice(index, 1);
-        this.renderQueue();
-    },
-
-    shuffleQueue() {
-        // Fisher-Yates shuffle
-        for (let i = this.queue.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [this.queue[i], this.queue[j]] = [this.queue[j], this.queue[i]];
+    showToast(message) {
+        // Create toast element if it doesn't exist
+        let toast = document.getElementById('toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'toast';
+            toast.className = 'toast';
+            document.body.appendChild(toast);
         }
-        this.renderQueue();
+
+        toast.textContent = message;
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2000);
     },
 
-    clearQueue() {
-        this.queue = [];
-        this.renderQueue();
+    async removeFromQueue(index) {
+        try {
+            const response = await fetch(`/api/v1/playback/queue/${index}`, {
+                method: 'DELETE'
+            });
+            const data = await response.json();
+            this.queue = data.queue;
+            this.renderQueue();
+        } catch (e) {
+            console.error('Failed to remove from queue:', e);
+        }
+    },
+
+    async shuffleQueue() {
+        try {
+            const response = await fetch('/api/v1/playback/queue/shuffle', {
+                method: 'POST'
+            });
+            const data = await response.json();
+            this.queue = data.queue;
+            this.renderQueue();
+        } catch (e) {
+            console.error('Failed to shuffle queue:', e);
+        }
+    },
+
+    async clearQueue() {
+        try {
+            const response = await fetch('/api/v1/playback/queue', {
+                method: 'DELETE'
+            });
+            const data = await response.json();
+            this.queue = data.queue;
+            this.renderQueue();
+        } catch (e) {
+            console.error('Failed to clear queue:', e);
+        }
     },
 
     async playNext() {
-        if (this.queue.length === 0) return;
+        try {
+            const response = await fetch('/api/v1/playback/queue/next', {
+                method: 'POST'
+            });
+            const data = await response.json();
 
-        const next = this.queue.shift();
-        this.renderQueue();
-        await this.playFile(next.id);
+            if (data.success) {
+                this.queue = data.queue;
+                this.isPlaying = true;
+                document.getElementById('now-playing').textContent = data.playing.name;
+                this.renderQueue();
+            }
+        } catch (e) {
+            console.error('Failed to play next:', e);
+        }
     },
 
     renderQueue() {
@@ -277,12 +367,24 @@ const Catalog = {
             <div class="queue-item">
                 <span class="queue-number">${index + 1}</span>
                 <span class="queue-name">${item.name}</span>
-                <button class="remove-btn" data-index="${index}">Remove</button>
+                <div class="queue-actions">
+                    <button class="play-now-btn" data-index="${index}">Play</button>
+                    <button class="remove-btn" data-index="${index}">X</button>
+                </div>
             </div>
         `).join('');
 
         container.querySelectorAll('.remove-btn').forEach(btn => {
             btn.addEventListener('click', () => this.removeFromQueue(parseInt(btn.dataset.index)));
+        });
+
+        container.querySelectorAll('.play-now-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const index = parseInt(btn.dataset.index);
+                const item = this.queue[index];
+                await this.removeFromQueue(index);
+                await this.playFile(item.id, true);
+            });
         });
     },
 

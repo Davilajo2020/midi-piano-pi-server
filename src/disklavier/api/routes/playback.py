@@ -1,5 +1,7 @@
 """Playback control endpoints."""
 
+import json
+import random
 from pathlib import Path
 from typing import Optional
 
@@ -10,6 +12,25 @@ from ...core.config import get_settings
 from ...core.midi_player import MIDIPlayer, PlaybackState, get_midi_player
 
 router = APIRouter(prefix="/api/v1/playback", tags=["playback"])
+
+# Server-side queue storage
+QUEUE_FILE = Path("/var/lib/disklavier/queue.json")
+
+
+def load_queue() -> list[dict]:
+    """Load queue from file."""
+    if QUEUE_FILE.exists():
+        try:
+            return json.loads(QUEUE_FILE.read_text())
+        except (json.JSONDecodeError, IOError):
+            return []
+    return []
+
+
+def save_queue(queue: list[dict]) -> None:
+    """Save queue to file."""
+    QUEUE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    QUEUE_FILE.write_text(json.dumps(queue))
 
 
 class PlaybackStatusResponse(BaseModel):
@@ -156,3 +177,106 @@ async def set_channel_mode(
         "play_all_channels": player.status.play_all_channels,
         "piano_channels": player.status.piano_channels,
     }
+
+
+# ============================================
+# Queue Endpoints
+# ============================================
+
+class QueueItem(BaseModel):
+    """A queue item."""
+    id: str
+    name: str
+
+
+class AddToQueueRequest(BaseModel):
+    """Request to add item to queue."""
+    id: str
+    name: str
+
+
+@router.get("/queue")
+async def get_queue():
+    """Get the current queue."""
+    queue = load_queue()
+    return {"queue": queue}
+
+
+@router.post("/queue")
+async def add_to_queue(request: AddToQueueRequest):
+    """Add an item to the queue."""
+    queue = load_queue()
+
+    # Avoid duplicates
+    if any(item["id"] == request.id for item in queue):
+        return {"success": False, "message": "Already in queue", "queue": queue}
+
+    queue.append({"id": request.id, "name": request.name})
+    save_queue(queue)
+    return {"success": True, "queue": queue}
+
+
+@router.delete("/queue/{index}")
+async def remove_from_queue(index: int):
+    """Remove an item from the queue by index."""
+    queue = load_queue()
+
+    if index < 0 or index >= len(queue):
+        raise HTTPException(status_code=404, detail="Invalid queue index")
+
+    removed = queue.pop(index)
+    save_queue(queue)
+    return {"success": True, "removed": removed, "queue": queue}
+
+
+@router.post("/queue/shuffle")
+async def shuffle_queue():
+    """Shuffle the queue."""
+    queue = load_queue()
+    random.shuffle(queue)
+    save_queue(queue)
+    return {"success": True, "queue": queue}
+
+
+@router.delete("/queue")
+async def clear_queue():
+    """Clear the entire queue."""
+    save_queue([])
+    return {"success": True, "queue": []}
+
+
+@router.post("/queue/next")
+async def play_next(player: MIDIPlayer = Depends(get_midi_player)):
+    """Pop the next item from queue and play it."""
+    queue = load_queue()
+
+    if not queue:
+        return {"success": False, "message": "Queue is empty"}
+
+    next_item = queue.pop(0)
+    save_queue(queue)
+
+    # Find and play the file
+    settings = get_settings()
+    catalog_dir = Path(settings.catalog.directory)
+
+    # Search for file by ID in catalog
+    file_path = None
+    for path in catalog_dir.rglob("*"):
+        if path.is_file() and path.stem == next_item["id"]:
+            file_path = path
+            break
+
+    if not file_path:
+        return {"success": False, "message": f"File not found: {next_item['name']}", "queue": queue}
+
+    try:
+        player.load(file_path)
+        await player.play()
+        return {
+            "success": True,
+            "playing": next_item,
+            "queue": queue,
+        }
+    except Exception as e:
+        return {"success": False, "message": str(e), "queue": queue}
