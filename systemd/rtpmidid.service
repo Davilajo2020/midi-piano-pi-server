@@ -1,0 +1,15 @@
+[Unit]
+Description=RTP MIDI Daemon for Network MIDI
+After=network.target avahi-daemon.service
+Wants=avahi-daemon.service
+
+[Service]
+Type=simple
+ExecStartPre=/bin/mkdir -p /var/run/rtpmidid
+ExecStart=/usr/local/bin/rtpmidid --name "Disklavier Pi"
+Restart=always
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target

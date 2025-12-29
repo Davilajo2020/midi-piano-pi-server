@@ -1,0 +1,183 @@
+/* Virtual Piano Keyboard Styles */
+
+.piano-container {
+    width: 100%;
+    overflow-x: auto;
+    padding: 1rem 0;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 8px;
+    margin: 1rem 0;
+}
+
+.piano-keyboard {
+    display: flex;
+    position: relative;
+    height: 200px;
+    min-width: max-content;
+    padding: 0 10px;
+    user-select: none;
+}
+
+/* White keys */
+.piano-key.white-key {
+    width: 40px;
+    height: 100%;
+    background: linear-gradient(180deg, #f8f8f8 0%, #e8e8e8 85%, #d8d8d8 100%);
+    border: 1px solid #999;
+    border-radius: 0 0 6px 6px;
+    margin-right: 2px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    box-shadow:
+        inset 0 -4px 8px rgba(0,0,0,0.1),
+        0 4px 8px rgba(0,0,0,0.3);
+    transition: background 0.05s, transform 0.05s, box-shadow 0.05s;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.piano-key.white-key:hover {
+    background: linear-gradient(180deg, #fff 0%, #f0f0f0 85%, #e0e0e0 100%);
+}
+
+.piano-key.white-key:active,
+.piano-key.white-key.active {
+    background: linear-gradient(180deg, #e0e0e0 0%, #d0d0d0 85%, #c0c0c0 100%);
+    transform: translateY(2px);
+    box-shadow:
+        inset 0 -2px 4px rgba(0,0,0,0.1),
+        0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Black keys */
+.piano-key.black-key {
+    width: 28px;
+    height: 65%;
+    background: linear-gradient(180deg, #333 0%, #1a1a1a 85%, #0d0d0d 100%);
+    border: 1px solid #000;
+    border-radius: 0 0 4px 4px;
+    margin-left: -15px;
+    margin-right: -15px;
+    cursor: pointer;
+    position: relative;
+    z-index: 2;
+    box-shadow:
+        inset 0 -3px 6px rgba(255,255,255,0.1),
+        0 4px 8px rgba(0,0,0,0.5);
+    transition: background 0.05s, transform 0.05s, box-shadow 0.05s;
+}
+
+.piano-key.black-key:hover {
+    background: linear-gradient(180deg, #444 0%, #2a2a2a 85%, #1a1a1a 100%);
+}
+
+.piano-key.black-key:active,
+.piano-key.black-key.active {
+    background: linear-gradient(180deg, #222 0%, #111 85%, #000 100%);
+    transform: translateY(2px);
+    box-shadow:
+        inset 0 -1px 3px rgba(255,255,255,0.1),
+        0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Key labels */
+.key-label {
+    font-size: 10px;
+    color: #666;
+    margin-bottom: 8px;
+    pointer-events: none;
+}
+
+/* MIDI input highlight (when piano keys are pressed) */
+.piano-key.midi-input {
+    animation: midi-pulse 0.3s ease-out;
+}
+
+.piano-key.white-key.midi-input {
+    background: linear-gradient(180deg, #4ade80 0%, #22c55e 85%, #16a34a 100%) !important;
+}
+
+.piano-key.black-key.midi-input {
+    background: linear-gradient(180deg, #166534 0%, #14532d 85%, #052e16 100%) !important;
+}
+
+@keyframes midi-pulse {
+    0% {
+        box-shadow: 0 0 20px rgba(74, 222, 128, 0.8);
+    }
+    100% {
+        box-shadow: none;
+    }
+}
+
+/* Active state (when played from web) */
+.piano-key.white-key.active {
+    background: linear-gradient(180deg, #e94560 0%, #d63d56 85%, #c7354c 100%) !important;
+}
+
+.piano-key.black-key.active {
+    background: linear-gradient(180deg, #7f1d1d 0%, #6b1a1a 85%, #571717 100%) !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .piano-keyboard {
+        height: 150px;
+    }
+
+    .piano-key.white-key {
+        width: 30px;
+    }
+
+    .piano-key.black-key {
+        width: 22px;
+        margin-left: -12px;
+        margin-right: -12px;
+    }
+
+    .key-label {
+        font-size: 8px;
+    }
+}
+
+/* Pedal controls */
+.pedal-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.pedal-btn {
+    padding: 0.75rem 1.5rem;
+    background: var(--bg-secondary);
+    border: 2px solid var(--accent);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pedal-btn:hover {
+    background: var(--accent);
+    color: white;
+}
+
+.pedal-btn.active {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 0 10px var(--accent);
+}
+
+.panic-btn {
+    background: var(--error);
+    border-color: var(--error);
+}
+
+.panic-btn:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+}

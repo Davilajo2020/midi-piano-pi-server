@@ -1,0 +1,66 @@
+# Disklavier Pi Configuration
+# Copy to /etc/disklavier/disklavier.yaml or ~/.config/disklavier/disklavier.yaml
+
+general:
+  # Name displayed in AirPlay and network discovery
+  device_name: "Living Room Piano"
+  # Logging level: DEBUG, INFO, WARNING, ERROR
+  log_level: "INFO"
+
+web:
+  # Network interface to bind to (0.0.0.0 for all interfaces)
+  host: "0.0.0.0"
+  # Web interface port
+  port: 8080
+
+midi:
+  # MIDI device: "auto" for auto-detection, or specific device name
+  # Examples: "auto", "USB Device 0x499:0x2003", "hw:2,0,0"
+  device: "auto"
+  # Default MIDI channel (0-15)
+  channel: 0
+  # Velocity curve: linear, soft, hard
+  velocity_curve: "linear"
+
+soundfont:
+  # Path to SF2 soundfont file for FluidSynth rendering
+  path: "/opt/disklavier/soundfonts/General Montage.sf2"
+  # Audio gain (1.0 = normal)
+  gain: 1.0
+
+airplay_broadcast:
+  # Enable AirPlay audio broadcast (piano -> speakers)
+  enabled: true
+  # Target AirPlay device: "auto" or specific device name
+  target: "auto"
+
+network_midi:
+  # Enable RTP-MIDI (Network MIDI) for remote MIDI input
+  enabled: true
+  # RTP-MIDI port
+  port: 5004
+
+uploads:
+  # Directory for uploaded MIDI/KAR files
+  directory: "/var/lib/disklavier/uploads"
+  # Maximum file size in MB
+  max_file_size_mb: 50
+  # Allowed file extensions
+  allowed_extensions:
+    - ".mid"
+    - ".midi"
+    - ".kar"
+
+catalog:
+  # Directories to scan for MIDI/KAR files
+  directories:
+    - "/var/lib/disklavier/catalog"
+    # Add additional directories as needed:
+    # - "/home/david/midi-files"
+  # Scan subdirectories recursively
+  scan_subdirs: true
+  # Allowed file extensions for catalog
+  allowed_extensions:
+    - ".mid"
+    - ".midi"
+    - ".kar"

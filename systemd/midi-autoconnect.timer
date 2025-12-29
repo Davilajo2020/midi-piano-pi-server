@@ -1,0 +1,9 @@
+[Unit]
+Description=Periodically auto-connect Network MIDI to DKC-800
+
+[Timer]
+OnBootSec=10
+OnUnitActiveSec=5
+
+[Install]
+WantedBy=timers.target

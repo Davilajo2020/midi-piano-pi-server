@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disklavier Pi</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/piano.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <h1>Disklavier Pi</h1>
+            <div class="status-bar">
+                <div class="status-item">
+                    <span id="ws-status" class="status-indicator disconnected"></span>
+                    <span>WebSocket: </span>
+                    <span id="ws-status-text">Connecting...</span>
+                </div>
+                <div class="status-item">
+                    <span id="midi-status" class="status-indicator disconnected"></span>
+                    <span>MIDI: </span>
+                    <span id="midi-status-text">Disconnected</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tab Navigation -->
+        <nav class="tab-nav">
+            <button class="tab-btn active" data-tab="catalog">Catalog</button>
+            <button class="tab-btn" data-tab="piano">Piano</button>
+            <button class="tab-btn" data-tab="status">Status</button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Catalog Tab -->
+            <div id="catalog-tab" class="tab-content active">
+                <!-- Queue Section -->
+                <section class="section queue-section">
+                    <div class="section-header">
+                        <h2>Queue</h2>
+                        <div class="queue-controls">
+                            <button id="shuffle-btn" class="small-btn">Shuffle</button>
+                            <button id="clear-queue-btn" class="small-btn">Clear</button>
+                        </div>
+                    </div>
+                    <div id="queue-list" class="queue-list">
+                        <p class="empty-message">Queue is empty. Add songs from the catalog below.</p>
+                    </div>
+                </section>
+
+                <!-- Catalog Section -->
+                <section class="section catalog-section">
+                    <div class="section-header">
+                        <h2>Song Catalog</h2>
+                        <span id="catalog-count" class="count-badge">0 songs</span>
+                    </div>
+
+                    <!-- Search -->
+                    <div class="search-box">
+                        <input type="text" id="catalog-search" placeholder="Search songs..." class="search-input">
+                        <button id="search-btn" class="search-btn">Search</button>
+                    </div>
+
+                    <!-- Breadcrumb -->
+                    <div id="breadcrumb" class="breadcrumb">
+                        <span class="crumb" data-path="">Home</span>
+                    </div>
+
+                    <!-- Catalog Content -->
+                    <div id="catalog-content" class="catalog-content">
+                        <!-- Directories -->
+                        <div id="catalog-dirs" class="catalog-dirs"></div>
+                        <!-- Files -->
+                        <div id="catalog-files" class="catalog-files"></div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Piano Tab -->
+            <div id="piano-tab" class="tab-content">
+                <!-- Virtual Piano Section -->
+                <section class="section piano-section">
+                    <h2>Virtual Piano</h2>
+                    <p class="hint">Click keys or use keyboard: A-L for white keys, W-U for black keys. Space for sustain.</p>
+                    <div id="piano-container"></div>
+                    <div class="pedal-controls">
+                        <button id="sustain-btn" class="pedal-btn">Sustain (Space)</button>
+                        <button id="panic-btn" class="pedal-btn panic-btn">Panic (All Notes Off)</button>
+                    </div>
+                    <div class="velocity-control">
+                        <label>Volume:</label>
+                        <input type="range" id="velocity-slider" min="0" max="200" value="100">
+                        <span id="velocity-value">100%</span>
+                    </div>
+                </section>
+
+                <!-- MIDI Player Section -->
+                <section class="section player-section">
+                    <h2>Now Playing</h2>
+
+                    <!-- Now Playing -->
+                    <div class="now-playing">
+                        <span class="label">File:</span>
+                        <span id="now-playing" class="file-name">No file loaded</span>
+                    </div>
+
+                    <!-- Playback Controls -->
+                    <div class="playback-controls">
+                        <div class="transport-buttons">
+                            <button id="stop-btn" class="transport-btn">Stop</button>
+                            <button id="play-btn" class="transport-btn primary">Play</button>
+                            <button id="pause-btn" class="transport-btn" disabled>Pause</button>
+                            <button id="skip-btn" class="transport-btn">Skip</button>
+                        </div>
+
+                        <div class="seek-container">
+                            <span id="current-time" class="time">0:00</span>
+                            <input type="range" id="seek-bar" class="seek-bar" min="0" max="100" value="0">
+                            <span id="total-time" class="time">0:00</span>
+                        </div>
+
+                        <div class="tempo-control">
+                            <label>Tempo:</label>
+                            <input type="range" id="tempo-slider" min="25" max="200" value="100">
+                            <span id="tempo-value">100%</span>
+                        </div>
+
+                        <div class="channel-control">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="play-all-channels">
+                                <span class="toggle-text">Play all instruments</span>
+                            </label>
+                            <span id="piano-channels" class="channel-info"></span>
+                        </div>
+                    </div>
+
+                    <!-- File Upload -->
+                    <div id="upload-area" class="upload-area">
+                        <input type="file" id="file-upload" accept=".mid,.midi,.kar" hidden>
+                        <p>Drag & drop MIDI files here, or</p>
+                        <button id="upload-btn" class="upload-btn">Choose File</button>
+                    </div>
+
+                    <!-- Uploaded Files -->
+                    <div id="file-list" class="file-list">
+                        <p class="no-files">No files uploaded yet</p>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Status Tab -->
+            <div id="status-tab" class="tab-content">
+                <section class="section status-section">
+                    <h2>System Status</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <span class="stat-label">CPU</span>
+                            <span id="cpu-usage" class="stat-value">--%</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Memory</span>
+                            <span id="mem-usage" class="stat-value">--%</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Temperature</span>
+                            <span id="temperature" class="stat-value">--C</span>
+                        </div>
+                    </div>
+                    <div class="airplay-control">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="airplay-toggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="toggle-label-text">AirPlay Broadcast</span>
+                        <span id="airplay-status" class="status-text">Off</span>
+                    </div>
+                    <div class="control-buttons">
+                        <button id="connect-btn" class="control-btn">Reconnect MIDI</button>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Disklavier Pi v1.0.0</p>
+        </footer>
+    </div>
+
+    <script src="js/websocket.js"></script>
+    <script src="js/piano.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/catalog.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
