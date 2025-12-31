@@ -169,6 +169,12 @@ class VirtualPiano {
         document.addEventListener('keydown', (e) => {
             if (e.repeat) return;
 
+            // Don't capture keys when typing in input fields
+            const tagName = e.target.tagName.toLowerCase();
+            if (tagName === 'input' || tagName === 'textarea' || e.target.isContentEditable) {
+                return;
+            }
+
             const key = e.key.toLowerCase();
 
             // Space bar toggles sustain pedal
@@ -187,6 +193,12 @@ class VirtualPiano {
         });
 
         document.addEventListener('keyup', (e) => {
+            // Don't capture keys when typing in input fields
+            const tagName = e.target.tagName.toLowerCase();
+            if (tagName === 'input' || tagName === 'textarea' || e.target.isContentEditable) {
+                return;
+            }
+
             const key = e.key.toLowerCase();
 
             // Space is now toggle, no action on keyup
