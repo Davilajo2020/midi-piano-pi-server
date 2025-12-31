@@ -495,14 +495,22 @@ def _handle_playback_status_change(status: PlaybackStatus) -> None:
         status.position_ms >= status.duration_ms - 100 and  # Allow small tolerance
         _auto_queue_enabled):
 
+        logger.info("Auto-queue: Song finished, checking for next in queue")
+
         # Schedule playing next song (avoid blocking the callback)
-        import asyncio
         try:
-            loop = asyncio.get_event_loop()
-            if loop.is_running():
-                loop.create_task(_play_next_from_queue())
+            loop = asyncio.get_running_loop()
+            loop.create_task(_play_next_from_queue())
         except RuntimeError:
-            pass  # No event loop available
+            # No running event loop - try to get the default loop
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_running():
+                    loop.create_task(_play_next_from_queue())
+                else:
+                    logger.warning("Auto-queue: Event loop not running")
+            except RuntimeError:
+                logger.warning("Auto-queue: No event loop available")
 
 
 async def _play_next_from_queue() -> None:

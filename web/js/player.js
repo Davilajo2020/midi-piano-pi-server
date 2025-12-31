@@ -53,6 +53,7 @@ class MIDIPlayerUI {
         document.getElementById('play-btn')?.addEventListener('click', () => this.play());
         document.getElementById('pause-btn')?.addEventListener('click', () => this.pause());
         document.getElementById('stop-btn')?.addEventListener('click', () => this.stop());
+        document.getElementById('skip-btn')?.addEventListener('click', () => this.skip());
 
         // Seek bar
         const seekBar = document.getElementById('seek-bar');
@@ -230,6 +231,30 @@ class MIDIPlayerUI {
             this.updatePlaybackButtons();
         } catch (error) {
             console.error('Stop error:', error);
+        }
+    }
+
+    async skip() {
+        try {
+            const response = await fetch('/api/v1/playback/queue/next', { method: 'POST' });
+            const result = await response.json();
+
+            if (result.success) {
+                this.isPlaying = true;
+                this.startStatusPolling();
+                this.updatePlaybackButtons();
+                if (result.playing) {
+                    this.updateNowPlaying({ name: result.playing.name });
+                }
+                // Refresh queue display
+                if (window.catalogUI) {
+                    window.catalogUI.loadQueue();
+                }
+            } else {
+                console.log('Skip: ' + (result.message || 'Queue empty'));
+            }
+        } catch (error) {
+            console.error('Skip error:', error);
         }
     }
 
