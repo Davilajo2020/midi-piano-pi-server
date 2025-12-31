@@ -37,6 +37,46 @@
         <main class="main-content">
             <!-- Catalog Tab -->
             <div id="catalog-tab" class="tab-content active">
+                <!-- Now Playing Section -->
+                <section class="section player-section compact">
+                    <div class="now-playing-header">
+                        <div class="now-playing">
+                            <span class="label">Now Playing:</span>
+                            <span id="now-playing" class="file-name">No file loaded</span>
+                        </div>
+                        <div class="transport-buttons">
+                            <button id="stop-btn" class="transport-btn">Stop</button>
+                            <button id="play-btn" class="transport-btn primary">Play</button>
+                            <button id="pause-btn" class="transport-btn" disabled>Pause</button>
+                            <button id="skip-btn" class="transport-btn">Skip</button>
+                        </div>
+                    </div>
+
+                    <div class="playback-controls">
+                        <div class="seek-container">
+                            <span id="current-time" class="time">0:00</span>
+                            <input type="range" id="seek-bar" class="seek-bar" min="0" max="100" value="0">
+                            <span id="total-time" class="time">0:00</span>
+                        </div>
+
+                        <div class="playback-options">
+                            <div class="tempo-control">
+                                <label>Tempo:</label>
+                                <input type="range" id="tempo-slider" min="25" max="200" value="100">
+                                <span id="tempo-value">100%</span>
+                            </div>
+
+                            <div class="channel-control">
+                                <label class="toggle-label">
+                                    <input type="checkbox" id="play-all-channels">
+                                    <span class="toggle-text">All instruments</span>
+                                </label>
+                                <span id="piano-channels" class="channel-info"></span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 <!-- Queue Section -->
                 <section class="section queue-section">
                     <div class="section-header">
@@ -77,6 +117,21 @@
                         <div id="catalog-files" class="catalog-files"></div>
                     </div>
                 </section>
+
+                <!-- File Upload Section -->
+                <section class="section upload-section">
+                    <div class="section-header">
+                        <h2>Upload Files</h2>
+                    </div>
+                    <div id="upload-area" class="upload-area">
+                        <input type="file" id="file-upload" accept=".mid,.midi,.kar" hidden>
+                        <p>Drag & drop MIDI files here, or</p>
+                        <button id="upload-btn" class="upload-btn">Choose File</button>
+                    </div>
+                    <div id="file-list" class="file-list">
+                        <p class="no-files">No files uploaded yet</p>
+                    </div>
+                </section>
             </div>
 
             <!-- Piano Tab -->
@@ -94,59 +149,6 @@
                         <label>Volume:</label>
                         <input type="range" id="velocity-slider" min="0" max="200" value="100">
                         <span id="velocity-value">100%</span>
-                    </div>
-                </section>
-
-                <!-- MIDI Player Section -->
-                <section class="section player-section">
-                    <h2>Now Playing</h2>
-
-                    <!-- Now Playing -->
-                    <div class="now-playing">
-                        <span class="label">File:</span>
-                        <span id="now-playing" class="file-name">No file loaded</span>
-                    </div>
-
-                    <!-- Playback Controls -->
-                    <div class="playback-controls">
-                        <div class="transport-buttons">
-                            <button id="stop-btn" class="transport-btn">Stop</button>
-                            <button id="play-btn" class="transport-btn primary">Play</button>
-                            <button id="pause-btn" class="transport-btn" disabled>Pause</button>
-                            <button id="skip-btn" class="transport-btn">Skip</button>
-                        </div>
-
-                        <div class="seek-container">
-                            <span id="current-time" class="time">0:00</span>
-                            <input type="range" id="seek-bar" class="seek-bar" min="0" max="100" value="0">
-                            <span id="total-time" class="time">0:00</span>
-                        </div>
-
-                        <div class="tempo-control">
-                            <label>Tempo:</label>
-                            <input type="range" id="tempo-slider" min="25" max="200" value="100">
-                            <span id="tempo-value">100%</span>
-                        </div>
-
-                        <div class="channel-control">
-                            <label class="toggle-label">
-                                <input type="checkbox" id="play-all-channels">
-                                <span class="toggle-text">Play all instruments</span>
-                            </label>
-                            <span id="piano-channels" class="channel-info"></span>
-                        </div>
-                    </div>
-
-                    <!-- File Upload -->
-                    <div id="upload-area" class="upload-area">
-                        <input type="file" id="file-upload" accept=".mid,.midi,.kar" hidden>
-                        <p>Drag & drop MIDI files here, or</p>
-                        <button id="upload-btn" class="upload-btn">Choose File</button>
-                    </div>
-
-                    <!-- Uploaded Files -->
-                    <div id="file-list" class="file-list">
-                        <p class="no-files">No files uploaded yet</p>
                     </div>
                 </section>
             </div>

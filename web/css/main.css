@@ -236,6 +236,68 @@ body {
     gap: 1rem;
 }
 
+/* Compact player in catalog tab */
+.player-section.compact {
+    padding: 1rem;
+}
+
+.now-playing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.now-playing-header .now-playing {
+    flex: 1;
+    min-width: 200px;
+}
+
+.now-playing-header .transport-buttons {
+    flex-shrink: 0;
+}
+
+.playback-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.playback-options .tempo-control,
+.playback-options .channel-control {
+    flex-shrink: 0;
+}
+
+.playback-options .channel-control {
+    flex-direction: row;
+    border-top: none;
+    padding-top: 0;
+}
+
+@media (max-width: 768px) {
+    .now-playing-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .now-playing-header .transport-buttons {
+        justify-content: center;
+    }
+
+    .playback-options {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .playback-options .tempo-control,
+    .playback-options .channel-control {
+        justify-content: center;
+    }
+}
+
 /* Now Playing */
 .now-playing {
     display: flex;
