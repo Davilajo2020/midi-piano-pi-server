@@ -203,12 +203,23 @@ class MIDIPlayerUI {
 
     async play() {
         try {
-            await fetch('/api/v1/playback/play', { method: 'POST' });
+            // First try to play current file
+            const response = await fetch('/api/v1/playback/play', { method: 'POST' });
+            const result = await response.json();
+
+            // If no file loaded, try to play from queue
+            if (!response.ok || result.detail === 'No file loaded') {
+                await this.skip();
+                return;
+            }
+
             this.isPlaying = true;
             this.startStatusPolling();
             this.updatePlaybackButtons();
         } catch (error) {
             console.error('Play error:', error);
+            // Try playing from queue as fallback
+            await this.skip();
         }
     }
 
