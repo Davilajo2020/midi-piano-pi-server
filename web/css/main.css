@@ -865,7 +865,8 @@ body {
 .catalog-dir {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
     padding: 0.75rem 1rem;
     background: var(--bg-tertiary);
     border-radius: 6px;
@@ -877,21 +878,27 @@ body {
     background: var(--border);
 }
 
+.dir-name {
+    flex: 1;
+    min-width: 100px;
+}
+
 .queue-folder-btn {
-    padding: 0.3rem 0.6rem;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border);
+    padding: 0.4rem 0.8rem;
+    background: var(--accent);
+    border: 1px solid var(--accent);
     border-radius: 4px;
-    color: var(--text-primary);
-    font-size: 0.8rem;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s;
-    margin-left: auto;
+    flex-shrink: 0;
 }
 
 .queue-folder-btn:hover {
-    background: var(--accent);
-    border-color: var(--accent);
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
 }
 
 .dir-icon {
