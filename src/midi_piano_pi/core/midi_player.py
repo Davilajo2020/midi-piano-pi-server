@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Callable, Optional
 
 import mido
+from mido import MetaMessage
 
 from .midi_controller import MIDIController, get_midi_controller
 
@@ -390,11 +391,16 @@ class MIDIPlayer:
         logger.info("Starting playback")
 
         try:
-            # Merge all tracks for playback
             start_time = time.time()
             current_tick = self._start_tick
 
-            for msg in self._midi_file.play(meta_messages=False):
+            # Iterate directly over the MIDI file (not using play() which has blocking sleep)
+            # This yields messages with msg.time as delta time in seconds
+            for msg in self._midi_file:
+                # Skip meta messages (tempo changes are already handled by mido's iteration)
+                if isinstance(msg, MetaMessage):
+                    continue
+
                 # Check for stop
                 if self._stop_event.is_set():
                     break
@@ -405,7 +411,7 @@ class MIDIPlayer:
                 if self._stop_event.is_set():
                     break
 
-                # Apply tempo adjustment to timing
+                # Apply tempo adjustment to timing using non-blocking async sleep
                 if msg.time > 0:
                     adjusted_time = msg.time / self._tempo_factor
                     await asyncio.sleep(adjusted_time)
